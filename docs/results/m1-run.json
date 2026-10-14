@@ -1,0 +1,432 @@
+{
+  "run": "m1",
+  "recorded": "2026-10-10T04:30:47+00:00",
+  "config": {
+    "name": "m1",
+    "seed": 1234,
+    "val_per_class": 10,
+    "vram_fraction": 0.9,
+    "min_free_ram_mib": 1500,
+    "train": {
+      "lora_r": 16,
+      "lora_alpha": 32,
+      "lora_dropout": 0.05,
+      "target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "learning_rate": 0.0002,
+      "epochs": 1.0,
+      "max_steps": 0,
+      "batch_size": 8,
+      "grad_accum": 2,
+      "warmup_ratio": 0.05,
+      "max_seq_len": 128,
+      "weight_decay": 0.0,
+      "gradient_checkpointing": true
+    },
+    "eval": {
+      "batch_size": 16,
+      "max_new_tokens": 16,
+      "few_shot_per_class": 1,
+      "limit_per_class": 0
+    }
+  },
+  "pins": {
+    "model": {
+      "repo_id": "Qwen/Qwen2.5-0.5B-Instruct",
+      "revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+      "weights_file": "model.safetensors",
+      "weights_sha256": "fdf756fa7fcbe7404d5c60e26bff1a0c8b8aa1f72ced49e7dd0210fe288fb7fe",
+      "licence": "Apache-2.0"
+    },
+    "dataset": {
+      "train": {
+        "url": "https://raw.githubusercontent.com/PolyAI-LDN/task-specific-datasets/57ec275d8078af65b7731c2a98be812d844a6d6b/banking_data/train.csv",
+        "sha256": "b06e26ac675513959a63135f11b94ea7786ed02da65db93a5650d8838cbc664b",
+        "size": 839073
+      },
+      "test": {
+        "url": "https://raw.githubusercontent.com/PolyAI-LDN/task-specific-datasets/57ec275d8078af65b7731c2a98be812d844a6d6b/banking_data/test.csv",
+        "sha256": "d12d6e3bc4c3103966ae786dc435913c0c563dfa328f5a3646d0e62cfeeb474d",
+        "size": 239961
+      }
+    },
+    "dataset_licence": "CC-BY-4.0"
+  },
+  "versions": {
+    "python": "3.14.5",
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "transformers": "5.19.0",
+    "peft": "0.21.2",
+    "bitsandbytes": "0.50.2",
+    "accelerate": "1.15.0",
+    "huggingface-hub": "1.33.0",
+    "safetensors": "0.8.0",
+    "tokenizers": "0.23.2",
+    "nvidia_driver": "596.36"
+  },
+  "machine": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",
+    "cpus": 20,
+    "gpu": {
+      "name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "vram_total_mib": 6140,
+      "vram_free_mib": 3979,
+      "capability": "8.9"
+    }
+  },
+  "eval_set": {
+    "n": 3075,
+    "labels": 77,
+    "limit_per_class": 0,
+    "few_shot_examples": 77
+  },
+  "load": {
+    "name": "load",
+    "seconds": 3.11,
+    "peak_allocated_mib": 444.2,
+    "peak_reserved_mib": 460.0,
+    "energy_wh": 0.0126,
+    "footprint_mib": 430.4
+  },
+  "phases": {
+    "load": {
+      "name": "load",
+      "seconds": 3.11,
+      "peak_allocated_mib": 444.2,
+      "peak_reserved_mib": 460.0,
+      "energy_wh": 0.0126
+    },
+    "zero-shot": {
+      "name": "zero-shot",
+      "seconds": 730.6,
+      "peak_allocated_mib": null,
+      "peak_reserved_mib": null,
+      "energy_wh": null
+    },
+    "few-shot": {
+      "name": "few-shot",
+      "seconds": 3282.4,
+      "peak_allocated_mib": null,
+      "peak_reserved_mib": null,
+      "energy_wh": null
+    },
+    "train": {
+      "name": "train",
+      "seconds": 787.14,
+      "peak_allocated_mib": 3240.11,
+      "peak_reserved_mib": 5412.0,
+      "energy_wh": 6.9848
+    },
+    "fine-tuned": {
+      "name": "fine-tuned",
+      "seconds": 160.86,
+      "peak_allocated_mib": 925.63,
+      "peak_reserved_mib": 1066.0,
+      "energy_wh": 1.2637
+    }
+  },
+  "results": {
+    "zero-shot": {
+      "mode": "zero-shot",
+      "n": 3075,
+      "accuracy": 0.1828,
+      "macro_f1": 0.1859,
+      "invalid_rate": 0.4293,
+      "seconds": 730.6,
+      "ms_per_query": 237.59,
+      "prompt_tokens_mean": 418.6,
+      "prompt_tokens_total": 1287090,
+      "generated_tokens_total": null,
+      "top_confusions": [],
+      "energy_wh": null,
+      "reused_from": "m1 run log 2026-10-09: 'zero-shot: accuracy 0.1828, macro-F1 0.1859, invalid 0.4293, 730.6 s'"
+    },
+    "few-shot": {
+      "mode": "few-shot",
+      "n": 3075,
+      "accuracy": 0.2615,
+      "macro_f1": 0.2802,
+      "invalid_rate": 0.3915,
+      "seconds": 3282.4,
+      "ms_per_query": 1067.45,
+      "prompt_tokens_mean": 2482.6,
+      "prompt_tokens_total": 7633890,
+      "generated_tokens_total": null,
+      "top_confusions": [],
+      "energy_wh": null,
+      "reused_from": "m1 run log 2026-10-09: 'few-shot: accuracy 0.2615, macro-F1 0.2802, invalid 0.3915, 3282.4 s'"
+    },
+    "fine-tuned": {
+      "mode": "fine-tuned",
+      "n": 3075,
+      "accuracy": 0.911869918699187,
+      "macro_f1": 0.9123421651363306,
+      "invalid_rate": 0.0006504065040650406,
+      "seconds": 160.75,
+      "ms_per_query": 52.28,
+      "prompt_tokens_mean": 44.6,
+      "prompt_tokens_total": 137040,
+      "generated_tokens_total": 12261,
+      "top_confusions": [
+        [
+          "pending_transfer",
+          "transfer_not_received_by_recipient",
+          11
+        ],
+        [
+          "balance_not_updated_after_bank_transfer",
+          "transfer_not_received_by_recipient",
+          6
+        ],
+        [
+          "card_arrival",
+          "card_delivery_estimate",
+          5
+        ],
+        [
+          "exchange_via_app",
+          "fiat_currency_support",
+          5
+        ],
+        [
+          "top_up_by_bank_transfer_charge",
+          "transfer_fee_charged",
+          5
+        ],
+        [
+          "card_payment_not_recognised",
+          "direct_debit_payment_not_recognised",
+          5
+        ],
+        [
+          "balance_not_updated_after_bank_transfer",
+          "transfer_timing",
+          5
+        ],
+        [
+          "top_up_reverted",
+          "top_up_failed",
+          4
+        ],
+        [
+          "direct_debit_payment_not_recognised",
+          "card_payment_not_recognised",
+          4
+        ],
+        [
+          "card_not_working",
+          "declined_card_payment",
+          3
+        ]
+      ],
+      "energy_wh": 1.2637469444444445
+    }
+  },
+  "train": {
+    "steps": 569,
+    "examples_seen": 9102,
+    "tokens_seen": 463684,
+    "seconds": 787.1,
+    "loss_curve": [
+      [
+        25,
+        2.9354
+      ],
+      [
+        50,
+        0.9031
+      ],
+      [
+        75,
+        0.4691
+      ],
+      [
+        100,
+        0.3585
+      ],
+      [
+        125,
+        0.286
+      ],
+      [
+        150,
+        0.2312
+      ],
+      [
+        175,
+        0.1808
+      ],
+      [
+        200,
+        0.1904
+      ],
+      [
+        225,
+        0.1586
+      ],
+      [
+        250,
+        0.1617
+      ],
+      [
+        275,
+        0.1334
+      ],
+      [
+        300,
+        0.1495
+      ],
+      [
+        325,
+        0.1141
+      ],
+      [
+        350,
+        0.1026
+      ],
+      [
+        375,
+        0.1048
+      ],
+      [
+        400,
+        0.0765
+      ],
+      [
+        425,
+        0.1023
+      ],
+      [
+        450,
+        0.0886
+      ],
+      [
+        475,
+        0.0868
+      ],
+      [
+        500,
+        0.089
+      ],
+      [
+        525,
+        0.0669
+      ],
+      [
+        550,
+        0.0574
+      ],
+      [
+        569,
+        0.0545
+      ]
+    ],
+    "val_loss_before": 6.1571,
+    "val_loss_after": 0.0662,
+    "truncated_examples": 1,
+    "trainable_params": 8798208,
+    "total_params": 323917696,
+    "adapter_mib": 33.61,
+    "resumed_after_step": 0
+  },
+  "cost": [
+    {
+      "against": "zero-shot",
+      "gpu_ms_per_query": {
+        "prompting": 237.59,
+        "fine_tuned": 52.28
+      },
+      "prompt_tokens_mean": {
+        "prompting": 418.6,
+        "fine_tuned": 44.6
+      },
+      "break_even_queries_gpu_time": 4248
+    },
+    {
+      "against": "few-shot",
+      "gpu_ms_per_query": {
+        "prompting": 1067.45,
+        "fine_tuned": 52.28
+      },
+      "prompt_tokens_mean": {
+        "prompting": 2482.6,
+        "fine_tuned": 44.6
+      },
+      "break_even_queries_gpu_time": 776
+    }
+  ],
+  "preflight": {
+    "name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "vram_total_mib": 6140,
+    "vram_free_mib": 5083,
+    "capability": "8.9",
+    "ram_free_mib": 3113
+  },
+  "deleted": [
+    {
+      "path": ".tmp/hf/hub/CACHEDIR.TAG",
+      "bytes": 195
+    },
+    {
+      "path": ".tmp/hf/hub/models--Qwen--Qwen2.5-0.5B-Instruct/snapshots/7ae557604adf67be50417f59c2c2f167def9a775/config.json",
+      "bytes": 659
+    },
+    {
+      "path": ".tmp/hf/hub/models--Qwen--Qwen2.5-0.5B-Instruct/snapshots/7ae557604adf67be50417f59c2c2f167def9a775/generation_config.json",
+      "bytes": 242
+    },
+    {
+      "path": ".tmp/hf/hub/models--Qwen--Qwen2.5-0.5B-Instruct/snapshots/7ae557604adf67be50417f59c2c2f167def9a775/LICENSE",
+      "bytes": 11343
+    },
+    {
+      "path": ".tmp/hf/hub/models--Qwen--Qwen2.5-0.5B-Instruct/snapshots/7ae557604adf67be50417f59c2c2f167def9a775/merges.txt",
+      "bytes": 1671839
+    },
+    {
+      "path": ".tmp/hf/hub/models--Qwen--Qwen2.5-0.5B-Instruct/snapshots/7ae557604adf67be50417f59c2c2f167def9a775/model.safetensors",
+      "bytes": 988097824
+    },
+    {
+      "path": ".tmp/hf/hub/models--Qwen--Qwen2.5-0.5B-Instruct/snapshots/7ae557604adf67be50417f59c2c2f167def9a775/tokenizer.json",
+      "bytes": 7031645
+    },
+    {
+      "path": ".tmp/hf/hub/models--Qwen--Qwen2.5-0.5B-Instruct/snapshots/7ae557604adf67be50417f59c2c2f167def9a775/tokenizer_config.json",
+      "bytes": 7305
+    },
+    {
+      "path": ".tmp/hf/hub/models--Qwen--Qwen2.5-0.5B-Instruct/snapshots/7ae557604adf67be50417f59c2c2f167def9a775/vocab.json",
+      "bytes": 2776833
+    },
+    {
+      "path": ".tmp/hf/hub/models--Qwen--Qwen2.5-0.5B-Instruct/trees/7ae557604adf67be50417f59c2c2f167def9a775.json",
+      "bytes": 1298
+    },
+    {
+      "path": ".tmp/hf/xet/logs/xet_20261008T210948347+0700_22140.log",
+      "bytes": 86214
+    },
+    {
+      "path": ".tmp/runs/m1/adapter/adapter_config.json",
+      "bytes": 1368
+    },
+    {
+      "path": ".tmp/runs/m1/adapter/adapter_model.safetensors",
+      "bytes": 35237104
+    },
+    {
+      "path": ".tmp/runs/m1/adapter/README.md",
+      "bytes": 5458
+    }
+  ]
+}

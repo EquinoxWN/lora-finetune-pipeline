@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=80"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lora-finetune-pipeline"
+version = "0.1.0"
+description = "Answers 'should we fine-tune or just prompt?' with a real, costed comparison instead of a guess."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+# torch is installed first from the PyTorch index (CPU in CI, CUDA 13.0 locally): see the Makefile.
+dependencies = [
+  "torch>=2.9",
+  "transformers>=5.0,<6",
+  "peft>=0.18,<1",
+  "huggingface-hub>=1.0",
+  "safetensors>=0.6",
+]
+
+[project.optional-dependencies]
+# Only for the GPU run: 4-bit quantization, device placement and the energy counter.
+gpu = ["bitsandbytes>=0.48", "accelerate>=1.10", "nvidia-ml-py>=13"]
+dev = ["pytest>=8", "pytest-timeout>=2.3", "ruff>=0.6", "mypy>=1.11", "pip-audit>=2.7"]
+
+[project.scripts]
+lfp = "lora_finetune_pipeline.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+lora_finetune_pipeline = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+timeout = 300
+addopts = "-p no:cacheprovider"
+
+[tool.ruff]
+line-length = 100
+extend-exclude = [".tmp", ".venv"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "UP", "S", "SIM", "RUF", "N", "C4", "PT", "RET", "PIE", "PERF"]
+# S311: random.Random is used only for seeded, reproducible splits and shuffles.
+ignore = ["E501", "S311"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S106"]
+
+[tool.mypy]
+strict = true
+files = ["src", "tests"]
+
+[[tool.mypy.overrides]]
+module = ["bitsandbytes.*", "pynvml.*", "psutil.*"]
+ignore_missing_imports = true

@@ -1,0 +1,21 @@
+{
+  "note": "Full held-out set (3,075 messages), config m1, eval batch 16. Both phases finished and were logged by `lfp run --config configs/m1.json` on 2026-10-09; the process was then stopped from outside at training step 150/569, before the results JSON was written. The numbers below are copied from that log; peak VRAM, GPU energy and confusion pairs for these two phases were not recorded. `lfp run --reuse` recomputes the prompt token counts exactly from the tokenizer.",
+  "results": {
+    "zero-shot": {
+      "n": 3075,
+      "accuracy": 0.1828,
+      "macro_f1": 0.1859,
+      "invalid_rate": 0.4293,
+      "seconds": 730.6,
+      "source": "m1 run log 2026-10-09: 'zero-shot: accuracy 0.1828, macro-F1 0.1859, invalid 0.4293, 730.6 s'"
+    },
+    "few-shot": {
+      "n": 3075,
+      "accuracy": 0.2615,
+      "macro_f1": 0.2802,
+      "invalid_rate": 0.3915,
+      "seconds": 3282.4,
+      "source": "m1 run log 2026-10-09: 'few-shot: accuracy 0.2615, macro-F1 0.2802, invalid 0.3915, 3282.4 s'"
+    }
+  }
+}

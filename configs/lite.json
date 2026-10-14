@@ -1,0 +1,21 @@
+{
+  "name": "lite",
+  "seed": 1234,
+  "val_per_class": 10,
+  "vram_fraction": 0.9,
+  "min_free_ram_mib": 1200,
+  "train": {
+    "lora_r": 16,
+    "lora_alpha": 32,
+    "learning_rate": 0.0002,
+    "max_steps": 150,
+    "batch_size": 8,
+    "max_seq_len": 128
+  },
+  "eval": {
+    "batch_size": 8,
+    "max_new_tokens": 16,
+    "few_shot_per_class": 1,
+    "limit_per_class": 5
+  }
+}

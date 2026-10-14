@@ -1,0 +1,415 @@
+{
+  "run": "lite",
+  "recorded": "2026-10-08T14:23:58+00:00",
+  "config": {
+    "name": "lite",
+    "seed": 1234,
+    "val_per_class": 10,
+    "vram_fraction": 0.9,
+    "min_free_ram_mib": 1200,
+    "train": {
+      "lora_r": 16,
+      "lora_alpha": 32,
+      "lora_dropout": 0.05,
+      "target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "learning_rate": 0.0002,
+      "epochs": 1.0,
+      "max_steps": 150,
+      "batch_size": 8,
+      "grad_accum": 1,
+      "warmup_ratio": 0.05,
+      "max_seq_len": 128,
+      "weight_decay": 0.0,
+      "gradient_checkpointing": true
+    },
+    "eval": {
+      "batch_size": 8,
+      "max_new_tokens": 16,
+      "few_shot_per_class": 1,
+      "limit_per_class": 5
+    }
+  },
+  "pins": {
+    "model": {
+      "repo_id": "Qwen/Qwen2.5-0.5B-Instruct",
+      "revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+      "weights_file": "model.safetensors",
+      "weights_sha256": "fdf756fa7fcbe7404d5c60e26bff1a0c8b8aa1f72ced49e7dd0210fe288fb7fe",
+      "licence": "Apache-2.0"
+    },
+    "dataset": {
+      "train": {
+        "url": "https://raw.githubusercontent.com/PolyAI-LDN/task-specific-datasets/57ec275d8078af65b7731c2a98be812d844a6d6b/banking_data/train.csv",
+        "sha256": "b06e26ac675513959a63135f11b94ea7786ed02da65db93a5650d8838cbc664b",
+        "size": 839073
+      },
+      "test": {
+        "url": "https://raw.githubusercontent.com/PolyAI-LDN/task-specific-datasets/57ec275d8078af65b7731c2a98be812d844a6d6b/banking_data/test.csv",
+        "sha256": "d12d6e3bc4c3103966ae786dc435913c0c563dfa328f5a3646d0e62cfeeb474d",
+        "size": 239961
+      }
+    },
+    "dataset_licence": "CC-BY-4.0"
+  },
+  "versions": {
+    "python": "3.14.5",
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "transformers": "5.19.0",
+    "peft": "0.21.2",
+    "bitsandbytes": "0.50.2",
+    "accelerate": "1.15.0",
+    "huggingface-hub": "1.33.0",
+    "safetensors": "0.8.0",
+    "tokenizers": "0.23.2",
+    "nvidia_driver": "596.36"
+  },
+  "machine": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",
+    "cpus": 20,
+    "gpu": {
+      "name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "vram_total_mib": 6140,
+      "vram_free_mib": 0,
+      "capability": "8.9"
+    }
+  },
+  "eval_set": {
+    "n": 385,
+    "labels": 77,
+    "limit_per_class": 5,
+    "few_shot_examples": 77
+  },
+  "load": {
+    "name": "load",
+    "seconds": 44.98,
+    "peak_allocated_mib": 444.2,
+    "peak_reserved_mib": 460.0,
+    "energy_wh": 0.054,
+    "footprint_mib": 430.4
+  },
+  "phases": {
+    "load": {
+      "name": "load",
+      "seconds": 44.98,
+      "peak_allocated_mib": 444.2,
+      "peak_reserved_mib": 460.0,
+      "energy_wh": 0.054
+    },
+    "zero-shot": {
+      "name": "zero-shot",
+      "seconds": 77.18,
+      "peak_allocated_mib": 616.52,
+      "peak_reserved_mib": 754.0,
+      "energy_wh": 0.4561
+    },
+    "few-shot": {
+      "name": "few-shot",
+      "seconds": 144.64,
+      "peak_allocated_mib": 1434.38,
+      "peak_reserved_mib": 2800.0,
+      "energy_wh": 1.2127
+    },
+    "train": {
+      "name": "train",
+      "seconds": 327.71,
+      "peak_allocated_mib": 3020.89,
+      "peak_reserved_mib": 5350.0,
+      "energy_wh": 1.2145
+    },
+    "fine-tuned": {
+      "name": "fine-tuned",
+      "seconds": 144.23,
+      "peak_allocated_mib": 815.65,
+      "peak_reserved_mib": 5350.0,
+      "energy_wh": 0.3764
+    }
+  },
+  "results": {
+    "zero-shot": {
+      "mode": "zero-shot",
+      "n": 385,
+      "accuracy": 0.17922077922077922,
+      "macro_f1": 0.17416865810577362,
+      "invalid_rate": 0.4155844155844156,
+      "seconds": 77.11,
+      "ms_per_query": 200.28,
+      "prompt_tokens_mean": 417.9,
+      "prompt_tokens_total": 160904,
+      "generated_tokens_total": 1300,
+      "top_confusions": [
+        [
+          "apple_pay_or_google_pay",
+          "<invalid>",
+          5
+        ],
+        [
+          "automatic_top_up",
+          "<invalid>",
+          5
+        ],
+        [
+          "card_payment_fee_charged",
+          "change_pin",
+          5
+        ],
+        [
+          "get_physical_card",
+          "<invalid>",
+          5
+        ],
+        [
+          "getting_spare_card",
+          "<invalid>",
+          5
+        ],
+        [
+          "transfer_into_account",
+          "<invalid>",
+          5
+        ],
+        [
+          "card_acceptance",
+          "<invalid>",
+          4
+        ],
+        [
+          "card_arrival",
+          "<invalid>",
+          4
+        ],
+        [
+          "card_linking",
+          "<invalid>",
+          4
+        ],
+        [
+          "card_payment_wrong_exchange_rate",
+          "<invalid>",
+          4
+        ]
+      ],
+      "energy_wh": 0.45607555555555557
+    },
+    "few-shot": {
+      "mode": "few-shot",
+      "n": 385,
+      "accuracy": 0.2597402597402597,
+      "macro_f1": 0.2712251171878501,
+      "invalid_rate": 0.412987012987013,
+      "seconds": 143.75,
+      "ms_per_query": 373.38,
+      "prompt_tokens_mean": 2481.9,
+      "prompt_tokens_total": 955544,
+      "generated_tokens_total": 1412,
+      "top_confusions": [
+        [
+          "automatic_top_up",
+          "<invalid>",
+          5
+        ],
+        [
+          "card_linking",
+          "<invalid>",
+          5
+        ],
+        [
+          "change_pin",
+          "pin_blocked",
+          5
+        ],
+        [
+          "get_physical_card",
+          "pin_blocked",
+          5
+        ],
+        [
+          "request_refund",
+          "<invalid>",
+          5
+        ],
+        [
+          "beneficiary_not_allowed",
+          "<invalid>",
+          4
+        ],
+        [
+          "cancel_transfer",
+          "<invalid>",
+          4
+        ],
+        [
+          "card_about_to_expire",
+          "<invalid>",
+          4
+        ],
+        [
+          "cash_withdrawal_charge",
+          "<invalid>",
+          4
+        ],
+        [
+          "direct_debit_payment_not_recognised",
+          "<invalid>",
+          4
+        ]
+      ],
+      "energy_wh": 1.2127133333333333
+    },
+    "fine-tuned": {
+      "mode": "fine-tuned",
+      "n": 385,
+      "accuracy": 0.6493506493506493,
+      "macro_f1": 0.6518885388442303,
+      "invalid_rate": 0.07792207792207792,
+      "seconds": 144.19,
+      "ms_per_query": 374.52,
+      "prompt_tokens_mean": 43.9,
+      "prompt_tokens_total": 16914,
+      "generated_tokens_total": 1527,
+      "top_confusions": [
+        [
+          "why_verify_identity",
+          "verify_my_identity",
+          5
+        ],
+        [
+          "contactless_not_working",
+          "<invalid>",
+          4
+        ],
+        [
+          "virtual_card_not_working",
+          "<invalid>",
+          4
+        ],
+        [
+          "balance_not_updated_after_bank_transfer",
+          "transfer_not_received_by_recipient",
+          3
+        ],
+        [
+          "card_delivery_estimate",
+          "card_arrival",
+          3
+        ],
+        [
+          "declined_cash_withdrawal",
+          "wrong_amount_of_cash_received",
+          3
+        ],
+        [
+          "receiving_money",
+          "fiat_currency_support",
+          3
+        ],
+        [
+          "top_up_by_cash_or_cheque",
+          "<invalid>",
+          3
+        ],
+        [
+          "card_acceptance",
+          "card_arrival",
+          2
+        ],
+        [
+          "card_delivery_estimate",
+          "<invalid>",
+          2
+        ]
+      ],
+      "energy_wh": 0.37639194444444446
+    }
+  },
+  "train": {
+    "steps": 150,
+    "examples_seen": 1200,
+    "tokens_seen": 60885,
+    "seconds": 327.65,
+    "loss_curve": [
+      [
+        25,
+        2.4068
+      ],
+      [
+        50,
+        1.1419
+      ],
+      [
+        75,
+        0.6185
+      ],
+      [
+        100,
+        0.4406
+      ],
+      [
+        125,
+        0.3155
+      ],
+      [
+        150,
+        0.3048
+      ]
+    ],
+    "val_loss_before": 6.138,
+    "val_loss_after": 0.3057,
+    "truncated_examples": 1,
+    "trainable_params": 8798208,
+    "total_params": 323917696,
+    "adapter_mib": 33.61
+  },
+  "cost": [
+    {
+      "against": "zero-shot",
+      "gpu_ms_per_query": {
+        "prompting": 200.29,
+        "fine_tuned": 374.52
+      },
+      "prompt_tokens_mean": {
+        "prompting": 417.9,
+        "fine_tuned": 43.9
+      },
+      "break_even_queries_gpu_time": null,
+      "mwh_per_query": {
+        "prompting": 1.185,
+        "fine_tuned": 0.978
+      },
+      "break_even_queries_energy": 5868
+    },
+    {
+      "against": "few-shot",
+      "gpu_ms_per_query": {
+        "prompting": 373.38,
+        "fine_tuned": 374.52
+      },
+      "prompt_tokens_mean": {
+        "prompting": 2481.9,
+        "fine_tuned": 43.9
+      },
+      "break_even_queries_gpu_time": null,
+      "mwh_per_query": {
+        "prompting": 3.15,
+        "fine_tuned": 0.978
+      },
+      "break_even_queries_energy": 560
+    }
+  ],
+  "preflight": {
+    "name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "vram_total_mib": 6140,
+    "vram_free_mib": 5083,
+    "capability": "8.9",
+    "ram_free_mib": 1927
+  }
+}

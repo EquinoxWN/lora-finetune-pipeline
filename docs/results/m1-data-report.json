@@ -1,0 +1,39 @@
+{
+  "raw": {
+    "train": 10003,
+    "test": 3080
+  },
+  "duplicates_removed": {
+    "train": 30,
+    "test": 3
+  },
+  "conflicting_removed": {
+    "train": 2,
+    "test": 2
+  },
+  "labels_canonicalised": {
+    "train": 323,
+    "test": 80
+  },
+  "train_overlapping_test_removed": 60,
+  "train_same_words_removed": 39,
+  "final": {
+    "train": 9102,
+    "val": 770,
+    "test": 3075
+  },
+  "labels": 77,
+  "leakage": {
+    "test/train exact": 0,
+    "test/train same-words": 0,
+    "test/val exact": 0,
+    "test/val same-words": 0,
+    "train/val exact": 0,
+    "train/val same-words": 0
+  },
+  "fingerprints": {
+    "train": "012f39e3d30577f53814e9259747abf314400aacb9f91abeafd586eced610c1e",
+    "val": "5646f54ffa4c5339003248120456264a8bc763554fa54e7c403ef8498dfad86b",
+    "test": "28e196df542a96a4faf158d732b37048e006c255b3dbeef9018f90b852ba0f9d"
+  }
+}
