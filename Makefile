@@ -31,13 +31,13 @@ setup:
 	mkdir -p .tmp
 	$(PY) -m pip install --upgrade pip
 	$(PY) -m pip install "torch==$(TORCH_VERSION)" --index-url $(TORCH_INDEX)
-	$(PY) -m pip install -e ".[dev]" "setuptools>=80"
+	$(PY) -m pip install -e ".[dev]" "setuptools>=84.1"
 
 # Local GPU run: CUDA torch, bitsandbytes, accelerate and the NVML energy counter.
 setup-gpu:
 	$(PY) -m pip install --upgrade pip
 	$(PY) -m pip install "torch==$(TORCH_VERSION)" --index-url $(TORCH_GPU_INDEX)
-	$(PY) -m pip install -e ".[gpu,dev]" "setuptools>=80"
+	$(PY) -m pip install -e ".[gpu,dev]" "setuptools>=84.1"
 
 # ruff, ruff format and mypy --strict.
 lint:
