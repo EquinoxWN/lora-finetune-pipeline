@@ -13,6 +13,7 @@ from lora_finetune_pipeline.config import TrainConfig
 from lora_finetune_pipeline.data import Example
 from lora_finetune_pipeline.train import (
     IGNORE,
+    _lr_factor,
     attach_lora,
     build_features,
     collate,
@@ -208,3 +209,12 @@ def test_for_inference_turns_the_kv_cache_back_on(tokenizer: PreTrainedTokenizer
     assert base.config.use_cache is True
     assert not base.is_gradient_checkpointing
     assert not model.training
+
+
+def test_learning_rate_warms_up_to_one_then_decays_to_zero() -> None:
+    warmup, steps = 4, 10
+    factors = [_lr_factor(step, warmup, steps) for step in range(steps + 1)]
+    assert factors[:4] == [0.25, 0.5, 0.75, 1.0]
+    assert factors[4] == 1.0  # the first step after warm-up starts the decay at full rate
+    assert factors[-1] == 0.0
+    assert factors[4:] == sorted(factors[4:], reverse=True)

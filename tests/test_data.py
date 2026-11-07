@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import io
 import random
+import threading
 from pathlib import Path
 from typing import IO
 
@@ -195,3 +196,61 @@ def test_prepare_writes_splits_and_report(tmp_path: Path) -> None:
     for name in ("train", "val", "test", "report"):
         assert (tmp_path / "splits" / f"{name}.{'json' if name == 'report' else 'jsonl'}").exists()
     assert splits.report.final["val"] == 6
+
+
+def test_concurrent_downloads_of_the_same_file_both_succeed(tmp_path: Path) -> None:
+    both_written = threading.Barrier(2, timeout=10)
+
+    class _Response(FakeResponse):
+        """Serves the payload, then waits until the other download has written it too."""
+
+        def read(self, size: int | None = -1) -> bytes:
+            chunk = super().read(size)
+            if not chunk:
+                both_written.wait()
+            return chunk
+
+    errors: list[BaseException] = []
+
+    def _run(dest: Path) -> None:
+        try:
+            download(pin(PAYLOAD), dest, lambda url: _Response(PAYLOAD, url))
+        except BaseException as exc:  # recorded and asserted below
+            errors.append(exc)
+
+    for round_no in range(10):  # a shared ".part" file failed in some rounds on Windows
+        dest = tmp_path / str(round_no) / "train.csv"
+        threads = [threading.Thread(target=_run, args=(dest,)) for _ in range(2)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join(timeout=30)
+        assert errors == []
+        assert [p.name for p in dest.parent.iterdir()] == ["train.csv"]
+        assert dest.read_bytes() == PAYLOAD
+
+
+def test_a_corrupted_local_copy_is_downloaded_again(tmp_path: Path) -> None:
+    dest = tmp_path / "train.csv"
+    dest.write_bytes(b"truncated")
+    assert download(pin(PAYLOAD), dest, opener_for(PAYLOAD)).read_bytes() == PAYLOAD  # type: ignore[arg-type]
+
+
+class _Endless(io.RawIOBase):
+    """A server that never stops sending, one byte per read, counting what was read."""
+
+    url = "https://example.org/train.csv"
+
+    def __init__(self) -> None:
+        self.bytes_read = 0
+
+    def read(self, size: int = -1) -> bytes:
+        self.bytes_read += 1
+        return b"x"
+
+
+def test_download_stops_reading_once_the_pin_is_exceeded(tmp_path: Path) -> None:
+    stream = _Endless()
+    with pytest.raises(DownloadError, match="larger than"):
+        download(pin(PAYLOAD), tmp_path / "train.csv", lambda url: stream)  # type: ignore[arg-type,return-value]
+    assert stream.bytes_read == len(PAYLOAD) + 1

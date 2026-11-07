@@ -82,6 +82,7 @@ def test_scores_count_invalid_answers_as_wrong() -> None:
 def test_break_even_uses_only_measured_savings() -> None:
     assert break_even_queries(1000.0, 3.0, 1.0) == 500
     assert break_even_queries(1000.0, 1.0, 1.0) is None
+    assert break_even_queries(10.0, 4.0, 1.0) == 4  # 3.33 queries round up, not down
     assert per_query(2.0, 0.5, 4) == {"gpu_ms_per_query": 500.0, "mwh_per_query": 125.0}
     prompting = {
         "mode": "few-shot",

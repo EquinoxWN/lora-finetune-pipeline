@@ -14,7 +14,7 @@ from lora_finetune_pipeline.config import EvalConfig, RunConfig, TrainConfig
 from lora_finetune_pipeline.data import curate
 from lora_finetune_pipeline.evaluate import generate
 from lora_finetune_pipeline.gpu import Meter
-from lora_finetune_pipeline.pipeline import Loaded, purge, run
+from lora_finetune_pipeline.pipeline import Loaded, purge, run, versions
 from lora_finetune_pipeline.report import table
 
 from .conftest import synthetic, tiny_model, tiny_tokenizer
@@ -187,3 +187,11 @@ def test_cli_run_stops_at_preflight_without_enough_memory(
         cli.main(["run", "--config", str(cfg), "--out", str(repo / "r.json")]) == cli.EXIT_PREFLIGHT
     )
     assert "preflight failed" in capsys.readouterr().err
+
+
+def test_versions_say_why_no_gpu_driver_was_found() -> None:
+    info = versions()
+    if info["nvidia_driver"] == "none":
+        assert info["nvidia_driver_error"]
+    else:
+        assert "nvidia_driver_error" not in info

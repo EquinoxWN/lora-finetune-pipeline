@@ -16,7 +16,7 @@ instead of 1,068 ms, so the training run is repaid after 776 queries:
 
 ![data curation and the comparison table](docs/proof/run.jpg)
 
-60 tests pass on a tiny random model on the CPU (no GPU, no download), lint and strict types are
+65 tests pass on a tiny random model on the CPU (no GPU, no download; the image shows the M1 run with 60), lint and strict types are
 clean, and the dependency audit finds no known vulnerabilities:
 
 ![pytest, ruff, mypy and pip-audit output](docs/proof/tests.jpg)
@@ -81,7 +81,7 @@ Language: **Python** (3.11+; the recorded run used 3.14, CI uses 3.12). Code in 
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 make setup       # CPU PyTorch, the package and dev tools
 make lint        # ruff, ruff format, mypy --strict
-make test        # 60 tests on a tiny random model, no GPU, no download
+make test        # 65 tests on a tiny random model, no GPU, no download
 
 make setup-gpu   # CUDA 13.0 PyTorch, bitsandbytes, accelerate, nvidia-ml-py
 make data        # download BANKING77 (SHA-256 checked), curate, split, check leakage
@@ -97,12 +97,14 @@ prompting phases that were already recorded.
 
 ## Tests and results
 
+Quality check against the 10 engineering rules, with the mutation table: [docs/quality/2026-11-01.md](docs/quality/2026-11-01.md).
+
 Full numbers, the analysis and the deleted files: [docs/results/m1.md](docs/results/m1.md). The GPU
 comparison was run locally on the RTX 4050; CI runs the tests only.
 
 | Check | Result |
 |---|---|
-| Tests (`make test`) | **60 passed**, 0 failed (twice) |
+| Tests (`make test`) | **65 passed**, 0 failed (60 in M1) |
 | Leakage between train, validation and test | **0** exact and 0 same-word overlaps |
 | Accuracy on 3,075 held-out messages | zero-shot 0.183, few-shot 0.262, **QLoRA adapter 0.912** |
 | Answers naming no allowed intent | 42.9%, 39.2%, **0.07%** |
@@ -115,11 +117,11 @@ comparison was run locally on the RTX 4050; CI runs the tests only.
 | Test file | Tests | What it proves |
 |---|---|---|
 | `test_config.py` | 15 | Pins are full hashes over HTTPS; configs load; bad keys, names, ranges, URLs and oversized files are refused |
-| `test_data.py` | 14 | Downloads are size- and hash-checked with no partial file; parsing, label canonicalisation, normalisation, de-duplication; no leakage on planted and 20 randomised datasets; seeded, fingerprinted split |
+| `test_data.py` | 17 | Downloads are size- and hash-checked with no partial file, stop reading at the pinned size, replace a corrupted copy and survive two concurrent downloads of one file; parsing, label canonicalisation, normalisation, de-duplication; no leakage on planted and 20 randomised datasets; seeded, fingerprinted split |
 | `test_env.py` | 3 | Every cache variable points inside `.tmp`; paths outside are refused |
-| `test_prompts_metrics.py` | 12 | Prompt contents per mode; strict answer parser (7 cases); accuracy, macro-F1, invalid rate; break-even arithmetic |
-| `test_train.py` | 9 | Loss only on the answer; truncation and padding; only LoRA trains; reproducible training; resume equals an uninterrupted run; KV cache restored after training |
-| `test_pipeline.py` | 7 | Ordered batched generation; end to end on CPU the adapter beats prompting; reuse of recorded results; purge confined to `.tmp`; CLI exit codes 2 and 3 |
+| `test_prompts_metrics.py` | 12 | Prompt contents per mode; strict answer parser (7 cases); accuracy, macro-F1, invalid rate; break-even arithmetic (rounded up) |
+| `test_train.py` | 10 | Loss only on the answer; warm-up then linear decay of the learning rate; truncation and padding; only LoRA trains; reproducible training; resume equals an uninterrupted run; KV cache restored after training |
+| `test_pipeline.py` | 8 | Ordered batched generation; a missing GPU driver is recorded with its reason; end to end on CPU the adapter beats prompting; reuse of recorded results; purge confined to `.tmp`; CLI exit codes 2 and 3 |
 
 ## Roadmap
 
