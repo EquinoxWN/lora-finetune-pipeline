@@ -120,8 +120,9 @@ def versions() -> dict[str, str]:
         pynvml.nvmlInit()
         driver = pynvml.nvmlSystemGetDriverVersion()
         out["nvidia_driver"] = driver.decode() if isinstance(driver, bytes) else str(driver)
-    except Exception:  # no NVIDIA driver (CI, tests)
+    except Exception as exc:  # no NVIDIA driver (CI, tests)
         out["nvidia_driver"] = "none"
+        out["nvidia_driver_error"] = f"{type(exc).__name__}: {exc}"
     return out
 
 
@@ -325,7 +326,9 @@ def _save_partial(
         },
         "phases": {k: v.to_dict() for k, v in phases.items()},
     }
-    (run_dir / "partial.json").write_text(json.dumps(data, indent=2), encoding="utf-8")
+    tmp = run_dir / "partial.json.tmp"
+    tmp.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    tmp.replace(run_dir / "partial.json")  # atomic: a resumed run never reads half a file
 
 
 def _progress(log: Log, mode: str) -> Callable[[int, int], None]:

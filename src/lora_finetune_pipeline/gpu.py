@@ -38,6 +38,7 @@ class _Nvml:
     def __init__(self) -> None:
         """Open the first GPU, or stay disabled."""
         self.handle: Any = None
+        self.unavailable: str | None = None
         try:
             import pynvml
 
@@ -45,8 +46,9 @@ class _Nvml:
             self.nvml: Any = pynvml
             self.handle = pynvml.nvmlDeviceGetHandleByIndex(0)
             pynvml.nvmlDeviceGetTotalEnergyConsumption(self.handle)
-        except Exception:  # missing library, no GPU, or unsupported counter
+        except Exception as exc:  # missing library, no GPU, or unsupported counter
             self.handle = None
+            self.unavailable = f"{type(exc).__name__}: {exc}"
 
     def millijoules(self) -> int | None:
         """Energy used by the GPU since the driver loaded, in mJ."""

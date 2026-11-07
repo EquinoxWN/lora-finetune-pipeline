@@ -139,14 +139,21 @@ def _run(
     results = run(cfg, splits, backend, run_dir, log=lambda s: print(s, flush=True), reuse=reuse)
     results["preflight"] = info
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(results, indent=2), encoding="utf-8")
+    _write_json(out, results)
     if not keep_models:
         model_files = [*backend.model_paths(), run_dir / "adapter", run_dir / "checkpoint.pt"]
         results["deleted"] = purge(model_files, root)
-        out.write_text(json.dumps(results, indent=2), encoding="utf-8")
+        _write_json(out, results)
         print(f"deleted {len(results['deleted'])} model/adapter files after recording the numbers")
     print(table(results))
     return 0
+
+
+def _write_json(path: Path, data: Any) -> None:
+    """Write JSON through a temp file and a rename, so a crash never leaves half a file."""
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    tmp.replace(path)
 
 
 def _purge(root: Path, *, data: bool) -> int:

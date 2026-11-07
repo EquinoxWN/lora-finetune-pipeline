@@ -8,6 +8,7 @@ import io
 import json
 import random
 import re
+import tempfile
 import unicodedata
 import urllib.request
 from collections import defaultdict
@@ -61,10 +62,12 @@ def download(remote: RemoteFile, dest: Path, opener: Opener = _https_open) -> Pa
     if dest.exists() and sha256_file(dest) == remote.sha256:
         return dest
     dest.parent.mkdir(parents=True, exist_ok=True)
-    part = dest.with_name(dest.name + ".part")
+    # One partial file per call: concurrent downloads never write or rename the same file.
+    fd, part_name = tempfile.mkstemp(prefix=dest.name + ".", suffix=".part", dir=dest.parent)
+    part = Path(part_name)
     digest, size = hashlib.sha256(), 0
     try:
-        with opener(remote.url) as response, part.open("wb") as out:
+        with open(fd, "wb") as out, opener(remote.url) as response:
             final_url = getattr(response, "url", remote.url) or remote.url
             if not str(final_url).startswith("https://"):
                 raise DownloadError(f"redirected to a non-HTTPS URL: {final_url}")
@@ -78,7 +81,12 @@ def download(remote: RemoteFile, dest: Path, opener: Opener = _https_open) -> Pa
                 out.write(chunk)
         if size != remote.size or digest.hexdigest() != remote.sha256:
             raise DownloadError(f"{remote.url} does not match its pinned size and SHA-256")
-        part.replace(dest)
+        try:
+            part.replace(dest)
+        except PermissionError:
+            # Windows refuses a rename while another download renames onto the same target.
+            if sha256_file(dest) != remote.sha256:
+                raise
     finally:
         part.unlink(missing_ok=True)
     return dest
