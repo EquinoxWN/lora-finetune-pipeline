@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 import hashlib
 import io
 import random
@@ -17,7 +18,6 @@ from lora_finetune_pipeline.data import (
     Example,
     bag_key,
     canonical_label,
-    csv_text,
     curate,
     dedupe,
     download,
@@ -27,6 +27,7 @@ from lora_finetune_pipeline.data import (
     normalise,
     parse_csv,
     prepare,
+    read_csv,
     save_jsonl,
     stratified_subset,
 )
@@ -34,6 +35,22 @@ from lora_finetune_pipeline.data import (
 from .conftest import synthetic
 
 PAYLOAD = b"text,category\nwhere is my card,card_arrival\n"
+
+
+def csv_text(rows: list[tuple[str, str]]) -> io.StringIO:
+    """An in-memory text,category CSV."""
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(["text", "category"])
+    writer.writerows(rows)
+    buf.seek(0)
+    return buf
+
+
+def test_read_csv_accepts_a_byte_order_mark(tmp_path: Path) -> None:
+    path = tmp_path / "bom.csv"
+    path.write_bytes(b"\xef\xbb\xbf" + PAYLOAD)
+    assert read_csv(path) == [Example("where is my card", "card_arrival")]
 
 
 class FakeResponse(io.BytesIO):

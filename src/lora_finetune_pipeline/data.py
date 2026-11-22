@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import csv
 import hashlib
-import io
 import json
 import random
 import re
 import tempfile
+import time
 import unicodedata
 import urllib.request
 from collections import defaultdict
@@ -81,15 +81,28 @@ def download(remote: RemoteFile, dest: Path, opener: Opener = _https_open) -> Pa
                 out.write(chunk)
         if size != remote.size or digest.hexdigest() != remote.sha256:
             raise DownloadError(f"{remote.url} does not match its pinned size and SHA-256")
-        try:
-            part.replace(dest)
-        except PermissionError:
-            # Windows refuses a rename while another download renames onto the same target.
-            if sha256_file(dest) != remote.sha256:
-                raise
+        _replace_or_accept(part, dest, remote.sha256)
     finally:
         part.unlink(missing_ok=True)
     return dest
+
+
+def _replace_or_accept(part: Path, dest: Path, sha256: str, attempts: int = 20) -> None:
+    """Rename part onto dest, or accept a verified dest that a concurrent download put there."""
+    # Windows refuses a rename, and even a read of dest, while another download renames onto it.
+    for attempt in range(attempts):
+        try:
+            part.replace(dest)
+            return
+        except PermissionError:
+            try:
+                if sha256_file(dest) == sha256:
+                    return
+            except OSError:
+                pass
+            if attempt == attempts - 1:
+                raise
+            time.sleep(0.05)
 
 
 def parse_csv(stream: Iterable[str], max_rows: int = MAX_ROWS) -> list[Example]:
@@ -115,7 +128,7 @@ def parse_csv(stream: Iterable[str], max_rows: int = MAX_ROWS) -> list[Example]:
 
 def read_csv(path: Path) -> list[Example]:
     """Parse a downloaded CSV file."""
-    with path.open(encoding="utf-8", newline="") as handle:
+    with path.open(encoding="utf-8-sig", newline="") as handle:
         return parse_csv(handle)
 
 
@@ -341,13 +354,3 @@ def prepare(
 def labels_of(rows: Iterable[Example]) -> list[str]:
     """Sorted distinct labels."""
     return sorted({e.label for e in rows})
-
-
-def csv_text(rows: Sequence[tuple[str, str]]) -> io.StringIO:
-    """Build an in-memory text,category CSV (for tests and synthetic data)."""
-    buf = io.StringIO()
-    writer = csv.writer(buf)
-    writer.writerow(["text", "category"])
-    writer.writerows(rows)
-    buf.seek(0)
-    return buf
