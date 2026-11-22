@@ -16,7 +16,7 @@ instead of 1,068 ms, so the training run is repaid after 776 queries:
 
 ![data curation and the comparison table](docs/proof/run.jpg)
 
-65 tests pass on a tiny random model on the CPU (no GPU, no download; the image shows the M1 run with 60), lint and strict types are
+66 tests pass on a tiny random model on the CPU (no GPU, no download; the image shows the M1 run with 60), lint and strict types are
 clean, and the dependency audit finds no known vulnerabilities:
 
 ![pytest, ruff, mypy and pip-audit output](docs/proof/tests.jpg)
@@ -81,7 +81,7 @@ Language: **Python** (3.11+; the recorded run used 3.14, CI uses 3.12). Code in 
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 make setup       # CPU PyTorch, the package and dev tools
 make lint        # ruff, ruff format, mypy --strict
-make test        # 65 tests on a tiny random model, no GPU, no download
+make test        # 66 tests on a tiny random model, no GPU, no download
 
 make setup-gpu   # CUDA 13.0 PyTorch, bitsandbytes, accelerate, nvidia-ml-py
 make data        # download BANKING77 (SHA-256 checked), curate, split, check leakage
@@ -104,7 +104,7 @@ comparison was run locally on the RTX 4050; CI runs the tests only.
 
 | Check | Result |
 |---|---|
-| Tests (`make test`) | **65 passed**, 0 failed (60 in M1) |
+| Tests (`make test`) | **66 passed**, 0 failed (60 in M1) |
 | Leakage between train, validation and test | **0** exact and 0 same-word overlaps |
 | Accuracy on 3,075 held-out messages | zero-shot 0.183, few-shot 0.262, **QLoRA adapter 0.912** |
 | Answers naming no allowed intent | 42.9%, 39.2%, **0.07%** |
