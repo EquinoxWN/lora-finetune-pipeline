@@ -74,7 +74,7 @@ def tiny_model(vocab_size: int, seed: int = 0) -> Qwen2ForCausalLM:
         max_position_embeddings=256,
         tie_word_embeddings=True,
     )
-    return Qwen2ForCausalLM(config)  # type: ignore[no-untyped-call]
+    return Qwen2ForCausalLM(config)  # type: ignore[no-untyped-call,unused-ignore]
 
 
 @pytest.fixture

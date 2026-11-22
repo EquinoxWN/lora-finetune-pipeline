@@ -127,7 +127,9 @@ def attach_lora(model: PreTrainedModel, cfg: TrainConfig, *, quantized: bool) ->
             gradient_checkpointing_kwargs={"use_reentrant": False},
         )
     elif cfg.gradient_checkpointing:
-        model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
+        model.gradient_checkpointing_enable(  # type: ignore[no-untyped-call,unused-ignore]
+            gradient_checkpointing_kwargs={"use_reentrant": False}
+        )
         model.enable_input_require_grads()  # type: ignore[no-untyped-call]
     peft_model = get_peft_model(model, lora_config(cfg))
     if not isinstance(peft_model, PeftModel):
